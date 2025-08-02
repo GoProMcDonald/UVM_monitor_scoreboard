@@ -276,11 +276,11 @@ package my_pkg;
   endtask
 endclass
 
-  class my_scoreboard extends uvm_scoreboard;
-  `uvm_component_utils(my_scoreboard)
+  class my_scoreboard extends uvm_scoreboard;//定义一个记分板类 my_scoreboard，继承自 uvm_scoreboard，用于验证事务的正确性。
+  `uvm_component_utils(my_scoreboard)//注册 my_scoreboard 类到 UVM factory，用于 type_id::create()
 
   // analysis_imp：用于接收 monitor 发来的 transaction
-  uvm_analysis_imp #(my_transaction, my_scoreboard) analysis_export;
+  uvm_analysis_imp #(my_transaction, my_scoreboard) analysis_export;// 定义一个分析导出端口 analysis_export，类型为 uvm_analysis_imp，接收 my_transaction 类型的事务，并交给 my_scoreboard 这个类处理。
 
   function new(string name, uvm_component parent);
     super.new(name, parent);
@@ -289,13 +289,13 @@ endclass
 
   // 实现 write() 方法接收并检查 transaction
   function void write(my_transaction t);
-    `uvm_info("SCOREBOARD", $sformatf("收到: cmd=%0d addr=%0d data=%0d", t.cmd, t.addr, t.data), UVM_LOW)
+    `uvm_info("SCOREBOARD", $sformatf("收到: cmd=%0d addr=%0d data=%0d", t.cmd, t.addr, t.data), UVM_LOW)//打印收到的事务信息
 
-    if (t.cmd && t.addr == 0 && t.data != 111)
+    if (t.cmd && t.addr == 0 && t.data != 111)//如果cmd为1（即写操作），且addr是0，但data不是111，报错（预期111）
       `uvm_error("SCOREBOARD", $sformatf("r0写入数据不符，期望=111，实际=%0d", t.data))
-    else if (t.cmd && t.addr == 1 && t.data != 222)
+    else if (t.cmd && t.addr == 1 && t.data != 222)//如果cmd为1（即写操作），且addr是1，但data不是222，报错（预期222）
       `uvm_error("SCOREBOARD", $sformatf("r1写入数据不符，期望=222，实际=%0d", t.data))
-    else if (t.cmd)
+    else if (t.cmd)//只要是写（cmd为1），且没出错，就说明写入正确，打印信息
       `uvm_info("SCOREBOARD", "写入正确", UVM_LOW)
   endfunction
 endclass
