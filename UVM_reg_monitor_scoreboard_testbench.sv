@@ -228,10 +228,10 @@ package my_pkg;
   uvm_analysis_port #(my_transaction) ap;
 
   // 覆盖率采样组
-  covergroup reg_cov;
-    coverpoint vif.cmd {
-      bins read  = {0};
-      bins write = {1};
+  covergroup reg_cov;//定义一个覆盖组，名字叫 reg_cov
+    coverpoint vif.cmd {// 定义一个覆盖点，监控 vif 的 cmd 信号
+      bins read  = {0};//定义名为read的bin，cmd为0时计数
+      bins write = {1};//定义名为write的bin，cmd为1时计数
     }
 
     coverpoint vif.addr {
@@ -243,7 +243,7 @@ package my_pkg;
       bins high = {[128:255]};
     }
 
-    cross vif.cmd, vif.addr;
+    cross vif.cmd, vif.addr;// 定义一个交叉覆盖点，监控 cmd 和 addr 的组合情况
   endgroup
 
   function new(string name, uvm_component parent);
